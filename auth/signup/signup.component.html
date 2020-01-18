@@ -1,0 +1,47 @@
+
+
+
+<mat-card class="example-card">
+  <mat-card-header fxLayoutAlign="center center">
+
+    <mat-card-title >Register</mat-card-title>
+
+  </mat-card-header>
+
+  <mat-card-content  fxLayout="column" fxLayoutAlign="space-around center"  >
+    <form [formGroup]="registerForm"  class="example-form">
+
+      <div class="form-group">
+        <mat-form-field class="example-full-width" appearance="outline">
+        <input type="name" formControlName="name" matInput placeholder="Name" required>
+        <mat-label><mat-icon>favorite</mat-icon> <i> name</i></mat-label>
+       </mat-form-field>
+      </div>
+
+      <div class="form-group">
+        <mat-form-field class="example-full-width" appearance="outline">
+        <input type="email" formControlName="email" class="form-control" matInput placeholder="Email"  required  >
+        <mat-label><mat-icon>favorite</mat-icon> <i> email</i></mat-label>
+      </mat-form-field>
+      </div>
+
+      <div class="form-group">
+        <mat-form-field class="example-full-width"  appearance="outline">
+        <input type="password" formControlName="password" class="form-control" matInput placeholder="Password" required minlength="6">
+        <mat-label><mat-icon>favorite</mat-icon> <i> password</i></mat-label>
+        <mat-error>Has to be at least 6 characters long.</mat-error>
+      </mat-form-field>
+      </div>
+
+    </form>
+  </mat-card-content>
+  <mat-card-actions fxLayoutAlign="center center">
+    <button mat-icon-button color="primary" aria-label="Example icon-button with a heart icon"  (click)="Register(registerForm.value)">
+      <mat-icon>favorite</mat-icon>
+    </button>
+    <button type="submit" (click)="Register(registerForm.value)" mat-raised-button color="primary">Register</button>
+    <button mat-icon-button color="primary" aria-label="Example icon-button with a heart icon"  (click)="Register(registerForm.value)">
+      <mat-icon>favorite</mat-icon>
+    </button>
+  </mat-card-actions>
+</mat-card>

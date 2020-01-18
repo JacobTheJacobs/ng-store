@@ -1,0 +1,59 @@
+<mat-card class="example-card">
+  <mat-card-header fxLayoutAlign="center center">
+    <mat-card-title>Login</mat-card-title>
+  </mat-card-header>
+
+  <mat-card-content  fxLayout="column" fxLayoutAlign="space-around center" >
+    <div class="form-group">
+      <mat-form-field class="example-full-width" appearance="outline">
+        <input
+          type="text"
+          [(ngModel)]="email"
+          placeholder="email"z
+          matInput
+          placeholder="Email"
+          required
+        />
+        <mat-label><mat-icon>favorite</mat-icon> <i> email</i></mat-label>
+      </mat-form-field>
+    </div>
+<br>
+    <div class="form-group">
+      <mat-form-field
+        class="example-full-width"
+        appearance="outline"
+      >
+        <input
+          type="password"
+          [(ngModel)]="password"
+          placeholder="email"
+          matInput
+          placeholder="Password"
+          required
+        />
+        <mat-label><mat-icon>favorite</mat-icon> <i> password</i></mat-label>
+      </mat-form-field>
+    </div>
+  </mat-card-content>
+  <mat-card-actions fxLayoutAlign="center center">
+    <button
+      mat-icon-button
+      color="primary"
+      aria-label="Example icon-button with a heart icon"
+      (click)="login()"
+    >
+      <mat-icon>favorite</mat-icon>
+    </button>
+    <button type="submit" (click)="login()" mat-raised-button color="primary">
+      Login
+    </button>
+    <button
+      mat-icon-button
+      color="primary"
+      aria-label="Example icon-button with a heart icon"
+      (click)="login()"
+    >
+      <mat-icon>favorite</mat-icon>
+    </button>
+  </mat-card-actions>
+</mat-card>
