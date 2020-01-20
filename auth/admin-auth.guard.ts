@@ -1,26 +1,33 @@
 import { Injectable } from '@angular/core';
 import { CanActivate, ActivatedRouteSnapshot, RouterStateSnapshot, Router } from '@angular/router';
-import { Observable } from 'rxjs';
+import { Observable, Subject } from 'rxjs';
 import { AuthService } from './auth.service';
-import { tap, map, take } from 'rxjs/operators';
-import { User } from 'firebase';
+import { tap, map, take, switchMap } from 'rxjs/operators';
+import { User } from '../user';
 
-@Injectable({
-  providedIn: 'root'
-})
+
+@Injectable()
 export class AdminAuthGuard implements CanActivate {
-  authService: any;
-  user$: Observable<User>;
 
-  constructor(private auth:AuthService, private route: Router){}
+  constructor(private auth: AuthService, private route: Router) {}
 
-canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot) {
-  if ( this.authService.canDelete(this.user$)) {
-    return true;
 
-  } else {
-    this.route.navigate(['/login']);
-    return false;
-  }
+
+  canActivate(
+    next: ActivatedRouteSnapshot,
+    state: RouterStateSnapshot): Observable<boolean> | Promise<boolean> | boolean {
+
+    const currentUser = this.auth.currentUser;
+    if (currentUser) {
+      // check if the route is retricted by role
+      if (next.data.roles && next.data.roles.indexOf(currentUser.roles) === -1) {
+        // role not authorized
+        this.route.navigate(['/login']);
+
+      } else {
+        return true;
+      }
+    }
+
   }
 }
