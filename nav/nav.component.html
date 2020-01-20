@@ -4,7 +4,7 @@
       <mat-icon>menu</mat-icon>
     </button>
   </div>
-  <div>
+  <div >
     <a routerLink="/home">Owner</a>
   </div>
   <div fxFlex fxLayout fxLayoutAlign="end" fxHide.xs>
@@ -12,11 +12,12 @@
       <li *ngIf="!isAuth">
         <a routerLink="/login" >Login</a>
       </li>
+
      <li *ngIf="!isAuth">
         <a  routerLink="/signup"  >Register</a>
       </li>
       <li *ngIf="isAuth">
-        <a  (click)="onLogout()"  >Logout</a>
+        <a class="link" (click)="onLogout()" >Logout</a>
       </li>
    
     </ul>
