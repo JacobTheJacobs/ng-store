@@ -4,8 +4,10 @@ a {
 }
 
 a:hover,
-a:active {
+a:active,
+.link {
   color: lightgray;
+   cursor: pointer; 
 }
 
 .navigation-items {
