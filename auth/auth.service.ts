@@ -2,14 +2,16 @@ import { Injectable } from '@angular/core';
 import { AngularFireAuth } from '@angular/fire/auth';
 import {
   AngularFirestore,
-  AngularFirestoreCollection
+  AngularFirestoreCollection,
+
 } from '@angular/fire/firestore';
 
-import { Observable, Subject } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { Observable, Subject, BehaviorSubject } from 'rxjs';
+import { map, switchMap } from 'rxjs/operators';
 import { User } from '../user';
 import { first } from 'rxjs/operators';
 import { Router } from '@angular/router';
+
 
 @Injectable({
   providedIn: 'root'
@@ -21,7 +23,22 @@ export class AuthService {
 
   private isAuthenticated = false;
   authChange = new Subject<boolean>();
-  user$: Observable<User>;
+
+
+
+  public currentUser: any;
+  public userStatus: string;
+  public userStatusChanges: BehaviorSubject<string> = new BehaviorSubject<string>(this.userStatus);
+  
+
+
+
+  setUserStatus(userStatus: any): void {
+    this.userStatus = userStatus;
+    this.userStatusChanges.next(userStatus);
+  }
+
+
 
   constructor(
     private db: AngularFirestore,
@@ -29,19 +46,22 @@ export class AuthService {
     public router: Router
   ) {
     this.userCollection = db.collection<User>('users');
-
     this.users = this.userCollection.snapshotChanges().pipe(
       map(actions => {
         return actions.map(a => {
           const data = a.payload.doc.data();
           const id = a.payload.doc.id;
+
           return { id, ...data };
         });
       })
     );
   }
 
-  registerUser(value) {
+
+
+
+registerUser(value) {
     return new Promise<any>((resolve, reject) => {
       this.afAuth.auth
         .createUserWithEmailAndPassword(value.email, value.password)
@@ -54,7 +74,7 @@ export class AuthService {
               name: value.name,
               password: value.password,
                roles: {
-                   admin: true
+                   subscriber: true
                     },
                 balance: 0
             };
@@ -70,67 +90,42 @@ export class AuthService {
 
 
 
+isAuth() {
 
-
-  // tslint:disable-next-line: adjacent-overload-signatures
-   isAuth() {
     return this.isAuthenticated;
   }
 
 
-
-  login(email: string, password: string) {
+login(email: string, password: string) {
     this.afAuth.auth
       .signInWithEmailAndPassword(email, password)
-      .then(value => {
-        console.log('Nice, it worked!');
-
-        this.isAuthenticated = true;
-        this.authChange.next(true);
-
-        this.router.navigate(['home']);
-      })
-      .catch(err => {
-        console.log('Something went wrong:', err.message);
-      });
+      .then(user => {
+ this.db.collection("users").ref.where("email", "==", user.user.email).onSnapshot(snap =>{
+          snap.forEach(userRef => {
+            console.log("userRef", userRef.data());
+            this.currentUser = userRef.data();
+            this.setUserStatus(this.currentUser)
+            if(userRef.data().role === "admin") {
+              this.router.navigate(["/admin"]);
+              this.isAuthenticated = true;
+              this.authChange.next(true);
+            }else{
+              this.router.navigate(["/home"]);
+              this.isAuthenticated = true;
+              this.authChange.next(true);
+            }
+          })
+        })
+       
+      }).catch(err => err)
   }
 
- logout() {
+logout() {
     this.authChange.next(false);
     this.router.navigate(['/login']);
     this.isAuthenticated = false;
-  }
+  
 
 
-
-
-canRead(user: User): boolean {
-  const allowed = ['admin', 'editor', 'subscriber'];
-  return this.checkAuthorization(user, allowed);
 }
-
-canEdit(user: User): boolean {
-  const allowed = ['admin', 'editor'];
-  return this.checkAuthorization(user, allowed);
-}
-
-canDelete(user: User): boolean {
-  const allowed = ['admin'];
-  return this.checkAuthorization(user, allowed);
-}
-
-
-
-// determines if user has matching role
-private checkAuthorization(user: User, allowedRoles: string[]): boolean {
-  if (!user) { return false }
-  for (const role of allowedRoles) {
-    if ( user.roles[role] ) {
-      return true;
-    }
-  }
-  return false;
-}
-
-
 }
