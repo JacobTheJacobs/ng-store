@@ -1,5 +1,5 @@
 # ng-store
-angular ecommerce with firestore and fireauth
+angular demo ecommerce with firestore and fireauth
 
 ### to do 
 adding admin products
